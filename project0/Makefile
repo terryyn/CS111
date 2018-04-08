@@ -34,8 +34,7 @@ check: default clean
      fi;\
 
 
-    #check output
-    ./
+
 
     #check segfault&catch
     ./lab0 --segfault --catch ;\
