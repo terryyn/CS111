@@ -11,6 +11,7 @@ SortedList.h SortedList.c: linked list operations interface and implementation
 yield.sh:script that runs the required test cases
 *.gp: script to generate graph
 
+note: the graph uploaded here may be a little bit abnormal. It looks more plausible after running a few more times.
 
 
 
