@@ -1,0 +1,115 @@
+NAME:Yunong Ye
+EMAIL:yeyunong@hotmail.com
+ID:004757414
+
+README:introuction, answer to questions
+Makefile: program build, clean, tar,graph
+lab2_add.c lab2_list.c: source codes to take command and run
+SortedList.h SortedList.c: linked list operations interface and implementation
+*.png: the graphs drawn from the result of codes with different options
+*.csv: the file that stores the data for program output
+yield.sh:script that runs the required test cases
+*.gp: script to generate graph
+
+
+
+
+
+
+
+
+QUESTION 2.1.1 - causing conflicts:
+Why does it take many iterations before errors are seen?
+Why does a significantly smaller number of iterations so seldom fail?
+
+let threads=10
+iterations=100:add-none,10,100,2000,396723,198,0
+iterations=1000:add-none,10,1000,20000,411534,20,0
+iterations=10000:add-none,10,10000,200000,3411339,17,-7513
+ANS:
+1:pthread_create is an expensive function and requires much more time
+than running the simple add function. When iterations are small,
+the time for creating the thread is longer than running the function,so
+there will be no race condition and result is correct because when one thread
+starts to run the threads created before are already finished.
+But when the iteration number is large,there will be time when multiple threads
+are running and modifying count simultaneously which makes result incorrect.
+2.as stated above
+
+
+QUESTION 2.1.2 - cost of yielding:
+Why are the --yield runs so much slower?
+Where is the additional time going?
+Is it possible to get valid per-operation timings if we are using the --yield option?
+If so, explain how. If not, explain why not.
+
+ANS:
+1.--yield is much slower because it calls sched_yiled() every time in run
+function to require the thread to release the CPU. So a context switch is
+involved every time sched_yield() is called and thus makes it slower.
+2. The extra time goes to the cost of context switch. More specifically,context
+switches has to first respond to a timer interrupt, then saves the
+states/registers of the thread, moves it to the last of waiting queue and  at
+last loads the new thread to run. Those combined take a lot of time in total.
+3.No.
+4.With --yield, the overhead of context switch is too much , so the
+result time is a lot longer than the actual valid time per operation.
+
+
+
+QUESTION 2.1.3 - measurement errors:
+Why does the average cost per operation drop with increasing iterations?
+If the cost per iteration is a function of the number of iterations, how do we know how many iterations to run (or what the "correct" cost is)?
+
+ANS:
+1.pthread_create takes much time and is an overhead when calculating
+operation time(total time= operation time + pthread_create time)
+However, the pthread_create time is fixed as the number of threads is fixed,1
+in this example. If iteration number is increasing, the actual operations will
+take more time and then the ratio of pthread_create overhead time in total time
+is lower,so the average time per operation drops.
+decreases.
+2.When the iterations number reach infinity where the function converges
+becasue pthread_create time is negligible compread with actual time spent on
+operations. Then the value there is the "correct" cost.
+
+
+
+QUESTION 2.1.4 - costs of serialization:
+Why do all of the options perform similarly for low numbers of threads?
+Why do the three protected operations slow down as the number of threads rises?
+
+ANS:
+1.beacsue when thread number is low, there is not much waiting time involved because
+computer has ability to run a low number of threads parallelly in different
+processors without having to wait for critical section.
+2.When the number of threads increase, there will be more threads waiting for the lock
+to operate on the critical section, so the average time per operation drops.
+
+
+
+QUESTION 2.2.1 - scalability of Mutex
+Compare the variation in time per mutex-protected operation vs the number of threads in Part-1 (adds) and Part-2 (sorted lists).
+Comment on the general shapes of the curves, and explain why they have this shape.
+Comment on the relative rates of increase and differences in the shapes of the curves, and offer an explanation for these differences.
+
+ANS:
+1.time per opertaion increases for both.
+The time increases because there will be more context switchs which are expensive when there are more threads working
+and because more threads will have to wait for the lock.
+2.Time stops increasing or increase little at last for add, but keeps increasing for list,and the increasing rate is larger in list.
+This is because the add function takes less time than list, so the waiting time is less, makes increasing rate smaller.
+And the reduction in overhead of thread creating compensates the increasing cost when
+thread number is large enough. For list, the critical section operation is more
+expensive, so the cost cannot be compensated.
+
+
+QUESTION 2.2.2 - scalability of spin locks
+
+Compare the variation in time per protected operation vs the number of threads for list operations protected by Mutex vs Spin locks. Comment on the general shapes of the curves, and explain why they have this shape.
+Comment on the relative rates of increase and differences in the shapes of the curves, and offer an explanation for these differences.
+
+ANS:
+1.They both increase as the thread number goes up because as stated above, context switch and resouce contention increases the cost.
+2.The graph of two methods are really similar but spin-lock ends up with more time at last when thread number is large.
+This is because spin-lock will have threads keeps checking condition and waste CPU cycle while mutex puts thread to sleep.
