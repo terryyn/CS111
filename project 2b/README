@@ -1,0 +1,74 @@
+NAME:Yunong Ye
+EMAIL:yeyunong@hotmail.com
+ID:004757414
+
+
+FILES:
+SortedList.h SortedList.c: source codes for SortedList operation
+lab2_list.c: source code to implement sublists and locktime
+Makefile: build, tar, profile,clean
+lab2_list.csv: results of all the tests
+profile.out: profiling report of running time
+lab2b_1.png:throughput vs. number of threads for mutex and spin-lock synchronized list operations.
+lab2b_2.png:mean time per mutex wait and mean time per operation for mutex-synchronized list operations.
+lab2b_3.png:successful iterations vs. threads for each synchronization method.
+lab2b_4.png:throughput vs. number of threads for mutex synchronized partitioned lists.
+lab2b_5.png:throughput vs. number of threads for spin-lock-synchronized partitioned lists.
+
+
+
+QUESTION 2.3.1 - Cycles in the basic list implementation:
+Where do you believe most of the cycles are spent in the 1 and 2-thread list tests ?
+Ans: Most cycles are spent in the actual list function like insert, lookup, delete.
+
+Why do you believe these to be the most expensive parts of the code?
+Ans: Because for one or two threads, there will not be many context switches happening.
+
+Where do you believe most of the time/cycles are being spent in the high-thread spin-lock tests?
+Ans: Most cycles are spent spinning because a lot of threads have to wait for the spin-lock to
+be free.
+
+Where do you believe most of the time/cycles are being spent in the high-thread mutex tests?
+Ans: Most cycles are spent in context switch because mutex will call a thread to go to sleep.
+
+
+
+QUESTION 2.3.2 - Execution Profiling:
+Where (what lines of code) are consuming most of the cycles when the spin-lock version of the list exerciser is run with a large number of threads?
+Ans:
+
+Why does this operation become so expensive with large numbers of threads?
+Ans: Because there will be more resource contention when there are more threads
+and more threads have to spin to wait for the spin lock to be free.
+
+
+
+QUESTION 2.3.3 - Mutex Wait Time:
+Look at the average time per operation (vs. # threads) and the average wait-for-mutex time (vs. #threads).
+Why does the average lock-wait time rise so dramatically with the number of contending threads?
+Ans: Because there will be more resouece contention when there are more threads.
+So every threads has to wait more time to acquire the lock and it rises dramatically because
+it adds the waiting time for every thread.
+
+Why does the completion time per operation rise (less dramatically) with the number of contending threads?
+Ans: Because the threads are running parallelly, so for every second increased completion time, the waiting time
+increases nearly thread_number seconds, so completion time increases less dramatically.
+
+How is it possible for the wait time per operation to go up faster (or higher) than the completion time per operation?
+Ans: As stated above, the wait time goes up faster because it is the time added together for each thread while
+completion time is just the time
+
+
+QUESTION 2.3.4 - Performance of Partitioned Lists
+Explain the change in performance of the synchronized methods as a function of the number of lists.
+Ans: The performace increases when the number of lists increases because more lists means
+there are less elements inside each list so the lookup and insert.
+
+Should the throughput continue increasing as the number of lists is further increased? If not, explain why not.
+Ans: No because as the number of lists is further increased, the elements in each list does not decrease much
+so the throughput will not increases much as before.
+
+It seems reasonable to suggest the throughput of an N-way partitioned list should be equivalent to the throughput of a single list with fewer (1/N) threads. Does this appear to be true in the above curves? If not, explain why not.
+Ans: No the number of threads is a more determining factor of conflict time while partitioning
+the sublist can only amortize the conflict time. So the throughput will be less than
+the single list with fewer threads.
