@@ -1,6 +1,6 @@
-#NAME: Xiwei Ma
-#EMAIL: xiweimacn@163.com
-#ID: 704755732
+#NAME: Xiwei Ma,Yunong Ye
+#EMAIL: xiweimacn@163.com,yeyunong@hotmail.com
+#ID: 704755732,004757414
 
 CC = gcc
 CFlAGS = -Wall -Wextra -g
