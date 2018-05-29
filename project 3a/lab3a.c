@@ -1,6 +1,6 @@
-//NAME: Xiwei Ma
-//EMAIL: xiweimacn@163.com
-//ID: 704755732
+//NAME: Xiwei Ma,Yunong Ye
+//EMAIL: xiweimacn@163.com,yeyunong@hotmail.com
+//ID: 704755732,004757414
 
 #include <stdio.h>
 #include <string.h>
@@ -163,7 +163,7 @@ void get_free_inode_entries()
 }
 
 
-static void get_directory_entries(int parent_inode)
+void get_directory_entries(int parent_inode)
 {
     int i;
     for(i = 0; i < EXT2_N_BLOCKS; i++)
@@ -172,15 +172,19 @@ static void get_directory_entries(int parent_inode)
             break;
         int dir_offset = 0;
         int start_offset = inode_block[i] * block_size;
-        while(dir_offset < block_size)
+	int check_type = 1;
+        while(dir_offset < block_size && check_type)
         {
-            int check = pread(fd_image, buf, sizeof(struct ext2_dir_entry), start_offset + dir_offset);
+	    int check = pread(fd_image, buf, sizeof(struct ext2_dir_entry), start_offset + dir_offset);
             if(check == -1){
                 fprintf(stderr, "Fail to read: %s \n", strerror(errno));
                 exit(2);
             }
             struct ext2_dir_entry *dir = (struct ext2_dir_entry *)buf;
-            if(dir->inode != 0)
+            check_type = dir->file_type;
+
+
+	    if(dir->inode != 0)
             {
                 /*
                     DIRENT
