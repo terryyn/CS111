@@ -1,6 +1,6 @@
-//NAME: Xiwei Ma,Yunong Ye
-//EMAIL: xiweimacn@163.com,yeyunong@hotmail.com
-//ID: 704755732,004757414
+//NAME: Xiwei Ma
+//EMAIL: xiweimacn@163.com
+//ID: 704755732
 
 #include <stdio.h>
 #include <string.h>
@@ -163,7 +163,7 @@ void get_free_inode_entries()
 }
 
 
-void get_directory_entries(int parent_inode)
+static void get_directory_entries(int parent_inode)
 {
     int i;
     for(i = 0; i < EXT2_N_BLOCKS; i++)
