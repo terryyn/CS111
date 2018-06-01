@@ -48,7 +48,15 @@ inode_list = []
 
 
 def block_consistency_audit():
-      
+    
+
+def inode_allocation_audits():
+    global inode_list, error_flag
+    for inode in inode_list:
+        if inode.file_type == '0':
+            if inode.inode_number not in ifree_list:
+                print("")
+                error_flag = True
 
 def main():
     if len(sys.args)!=2:
