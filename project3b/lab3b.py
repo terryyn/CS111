@@ -39,7 +39,7 @@ class inode:
         self.atime = i
         self.file_size = j
         self.disk_space = k
-        self.block_address = l
+        self.block_addresses = l
 
 
 class directory:
@@ -60,6 +60,13 @@ class indirect:
         self.blocknum_scanned = d
         self.blocknum_referenced = e
 
+class block:
+    def __init__(self,a,b,c,d):
+        self.block_type = a
+        self.block_num = b
+        self.inode_num = c
+        self.offset = d
+
 sp = superblock(0,0,0,0,0,0,0)
 group_list = []
 bfree_list = []
@@ -68,25 +75,93 @@ inode_list = []
 directory_list = []
 indirect_list = []
 
-
+block_map = {}
 def block_consistency_audit():
+    global error_flag
+    global sp
+    max_size = sp.block_per_group
+    first_block = group_list[0].first_block_inode 
+    for inode in inode_list:
+        addresses = inode.block_addresses
+        for i in range(len(addresses)):
+            if addresses[i]==0:
+                continue
+            block_type = ""
+            offset = 0
+            if i == 12:
+                block_type = "INDIRECT BLOCK"
+                offset = 12
+            elif i == 13:
+                offset = 268
+                block_type = "DOUBLE INDIRECT BLOCK"
+            elif i==14:
+                offset=65804
+                block_type = "TRIPLE INDIRECT BLOCK"
+            else:
+                block_type = "BLOCK"
+            
+
+            temp_block = block(block_type,addresses[i],inode.inode_number,offset)
+
+            if addresses[i] not in bfree_list:
+                if addresses[i] not in block_map:
+                    block_map[addresses[i]] = []
+                    block_map[addresses[i]].append(temp_block)
+                else:
+                    block_map.append(temp_block)
+                if addresses[i]<0 or addresses[i]>max_size:
+                    error_flag = True
+                    print('INVALID {} {} IN INODE {} AT OFFSET {}'.format(block_type,addresses[i],inode.inode_number,offset))
+                if addresses[i]<first_block:
+                    error_flag = True
+                    print('RESERVED {} {} IN INODE {} AT OFFSET {}'.format(block_type,addresses[i],inode.inode_number,offset))
+            else:
+                error_flag = True
+                print('ALLOCATED BLOCK {} ON FREELIST'.format(addresses[i]))
+    for indirect in indirect_list:
+        block_type = ""
+        offset = indirect.logical_offset
+
+        if indirect.level == 1:
+            block_type = "INDIRECT BLOCK"
+        elif indirect.level == 2:
+            block_type = "DOUBLE INDIRECT BLOCK"
+        elif indirect.level==3:
+            block_type = "TRIPLE INDIRECT BLOCK"
+        else:
+            block_type = "BLOCK"
+        
+
+        temp_block = block(block_type,indirect.blocknum_referenced,indirect.owning_file,offset)
+
+        if indirect.blocknum_referenced not in bfree_list:
+            if  not in block_map:
+                block_map[indirect.blocknum_reference] = []
+                block_map[indirect.blocknum_reference].append(temp_block)
+            else:
+                block_map.append(temp_block)
+            if indirect.blocknum_reference<0 or indirect.blocknum_reference>max_size:
+                error_flag = True
+                print('INVALID {} {} IN INODE {} AT OFFSET {}'.format(block_type,indirect.blocknum_reference,indirect.owning_file,offset))
+            if indirect.blocknum_reference<first_block:
+                error_flag = True
+                print('RESERVED {} {} IN INODE {} AT OFFSET {}'.format(block_type,indirect.blocknum_reference,indirect.owning_file,offset))
+        else:
+            error_flag = True
+            print('ALLOCATED BLOCK {} ON FREELIST'.format(indirect.blocknum_reference))
+
+    for key in block_map:
+        if len(block_map[key])>1:
+            for temp in block_map[key]:
+                print('DUPLICATE {} {} IN INODE AT {} AT OFFSET {}'.format(temp.block_type,temp.block_num,temp.inode_num,temp.offset))
+
+
+    for k in range(first_block,group_list[0].block_number_in_group):
+        if k not in bfree_list and k not in block_map:
+            error_flag = True
+            print('UNREFERENCED BLOCK {}'.format(k))
     
 
-def inode_allocation_audits():
-    global inode_list, error_flag
-    for inode in inode_list:
-        if inode.file_type != '0':
-            if inode.inode_number in ifree_list:
-                print("ALLOCATED INODE %d ON FREELIST" % inode.inode_number)
-                error_flag = True
-        else:
-            if inode.inode_number not in ifree_list:
-                print("UNALLOCATED INODE %d NOT ON FREELIST" % inode.inode_number)
-                error_flag = True
-
-    #
-    # edit free inode lists?
-    #
     
 
 def main():
@@ -122,10 +197,14 @@ def main():
             indirect_list.append(temp_indirect)
         else:
             print >> sys.stderr, "invalid data line"
-            sys.exit(1)
-                        
+            sys.exit(1)                        
 
     block_consistency_audit()
     
+    if error_flag:
+        sys.exit(2)
+    else:
+        sys.exit(0)
+        
 if __name__ == "__main__":
     main()
