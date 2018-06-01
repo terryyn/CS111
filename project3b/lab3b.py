@@ -75,10 +75,19 @@ def block_consistency_audit():
 def inode_allocation_audits():
     global inode_list, error_flag
     for inode in inode_list:
-        if inode.file_type == '0':
-            if inode.inode_number not in ifree_list:
-                print("")
+        if inode.file_type != '0':
+            if inode.inode_number in ifree_list:
+                print("ALLOCATED INODE %d ON FREELIST" % inode.inode_number)
                 error_flag = True
+        else:
+            if inode.inode_number not in ifree_list:
+                print("UNALLOCATED INODE %d NOT ON FREELIST" % inode.inode_number)
+                error_flag = True
+
+    #
+    # edit free inode lists?
+    #
+    
 
 def main():
     if len(sys.args)!=2:
