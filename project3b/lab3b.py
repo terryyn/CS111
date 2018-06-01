@@ -62,7 +62,7 @@ class indirect:
         self.level = b
         self.logical_offset = c
         self.blocknum_scanned = d
-        self.blocknum_referenced = e
+        self.blocknum_reference = e
 
 sp = superblock(0,0,0,0,0,0,0)
 group_list = []
@@ -86,7 +86,7 @@ def block_consistency_audit():
     max_size = sp.block_per_group
     first_block = group_list[0].first_block_inode 
     for inode in inode_list:
-        addresses = inode.block_addresses
+        addresses = inode.block_address
         for i in range(len(addresses)):
             if addresses[i]==0:
                 continue
@@ -112,7 +112,7 @@ def block_consistency_audit():
                     block_map[addresses[i]] = []
                     block_map[addresses[i]].append(temp_block)
                 else:
-                    block_map.append(temp_block)
+                    block_map[addresses[i]].append(temp_block)
                 if addresses[i]<0 or addresses[i]>max_size:
                     error_flag = True
                     print('INVALID {} {} IN INODE {} AT OFFSET {}'.format(block_type,addresses[i],inode.inode_number,offset))
@@ -136,15 +136,15 @@ def block_consistency_audit():
             block_type = "BLOCK"
         
 
-        temp_block = block(block_type,indirect.blocknum_referenced,indirect.owning_file,offset)
+        temp_block = block(block_type,indirect.blocknum_reference,indirect.owning_file,offset)
 
-        if indirect.blocknum_referenced not in bfree_list:
-            if indirect.blocknum_referenced not in block_map:
+        if indirect.blocknum_reference not in bfree_list:
+            if indirect.blocknum_reference not in block_map:
                 block_map[indirect.blocknum_reference] = []
                 block_map[indirect.blocknum_reference].append(temp_block)
             else:
-                block_map.append(temp_block)
-            if indirect.blocknum_reference<0 or indirect.blocknum_reference>max_size:
+                block_map[indirect.blocknum_reference].append(temp_block)
+            if int(indirect.blocknum_reference)<0 or int(indirect.blocknum_reference)>max_size:
                 error_flag = True
                 print('INVALID {} {} IN INODE {} AT OFFSET {}'.format(block_type,indirect.blocknum_reference,indirect.owning_file,offset))
             if indirect.blocknum_reference<first_block:
@@ -259,7 +259,7 @@ def main():
         elif line[0] == 'IFREE':
             ifree_list.append(int(line[1]))
         elif line[0] == 'INODE':
-            temp_inode = inode(int(line[1]),line[2],int(line[3]),int(line[4]),int(line[5]),int(line[6]),line[7],line[8],line[9],int(line[10]),int(line[11]),line[12:])
+            temp_inode = inode(int(line[1]),line[2],int(line[3]),int(line[4]),int(line[5]),int(line[6]),line[7],line[8],line[9],int(line[10]),int(line[11]),list(map(int,line[12:])))
             inode_list.append(temp_inode)
         elif line[0] == 'DIRENT':
             temp_direc = directory(int(line[1]),int(line[2]),int(line[3]),int(line[4]),int(line[5]),line[6])
