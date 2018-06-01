@@ -199,12 +199,9 @@ def main():
             print >> sys.stderr, "invalid data line"
             sys.exit(1)                        
 
-    block_consistency_audit()
-    
     if error_flag:
         sys.exit(2)
     else:
         sys.exit(0)
-        
 if __name__ == "__main__":
     main()
