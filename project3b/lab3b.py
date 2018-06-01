@@ -4,9 +4,12 @@ import sys
 filename = ""
 data = []
 error_flag = False
+unallocated_inodes = []
+allocated_inodes = []
+inode_parent = {2:2}
 
 class superblock:
-    def __init__(self,a,b,c,d,e,f,g):
+    def __init__(self,a,b,c,d,e,f,g): 
         self.total_num_blocks=a
         self.total_num_inode=b
         self.block_size=c
@@ -73,21 +76,72 @@ def block_consistency_audit():
     
 
 def inode_allocation_audits():
-    global inode_list, error_flag
+    global inode_list, error_flag, ifree_list, unallocated_inodes, allocated_inodes
+    unallocated_inodes = ifree_list
     for inode in inode_list:
+        inode_num = inode.inode_number
         if inode.file_type != '0':
-            if inode.inode_number in ifree_list:
-                print("ALLOCATED INODE %d ON FREELIST" % inode.inode_number)
+            if inode_num in ifree_list:
+                print("ALLOCATED INODE %d ON FREELIST" % inode_num)
                 error_flag = True
+                allocated_inodes.append(inode)
+                unallocated_inodes.remove(inode_num)
         else:
-            if inode.inode_number not in ifree_list:
-                print("UNALLOCATED INODE %d NOT ON FREELIST" % inode.inode_number)
+            if inode_num not in ifree_list:
+                print("UNALLOCATED INODE %d NOT ON FREELIST" % inode_num)
                 error_flag = True
-
+                unallocated_inodes.append(inode_num)
     #
     # edit free inode lists?
     #
-    
+def find_parent():
+    global inode_parent, directory_list
+    for directory in directory_list:
+        inode_num = directory.reference_inode
+        if directory.name != "'.'" and directory.name != "'..'":
+            if inode_num >= 1 and inode_num <= sp.total_num_inode and inode_num in allocated_inodes:
+                inode_parent[inode_num] = directory.parent_inode_number
+
+
+def directory_consistency_audits():
+    global directory_list, unallocated_inodes, allocated_inodes, inode_parent
+    inode_d = {}
+    find_parent()
+    for directory in directory_list:
+        inode_num = directory.reference_inode
+        dir_name = directory.name
+        parent_num = directory.parent_inode_number
+        if inode_num in unallocated_inodes:
+            print("DIRECTORY INODE %d NAME %s UNALLOCATED INODE %d" % (parent_num, dir_name, inode_num))
+            error_flag = True
+        else if inode_num < 1 or inode_num > sp.total_num_inode:
+            print("DIRECTORY INODE %d NAME %s INVALID INODE %d" % (parent_num, dir_name, inode_num))
+            error_flag = True
+        else if inode_num not in inode_d
+            inode_d[inode_num] = 1
+        else
+            inode_d[inode_num] = 1 + inode_d[inode_num]
+
+        if dir_name == "'.'":
+            if inode_num != parent_num:
+                error_flag = True
+                print("DIRECTORY INODE %d NAME '.' LINK TO INODE %d SHOULD BE %d" % (parent_num, inode_num,parent_num))
+        if dir_name == "'..'":
+            if inode_parent[parent_num] != inode_num:
+                error_flag = True
+                print("DIRECTORY INODE %d NAME '..' LINK TO INODE %d SHOULD BE %d" % (parent_num, inode_num,inode_parent[parent_num]))
+                
+    for inode in allocated_inodes:
+        if inode not in inode_d:
+            if inode.link_count != 0:
+                error_flag = True
+                print("INODE %d HAS 0 LINKS BUT LINKCOUNT IS %d" % (inode.inode_number,inode.link_count))
+        else:
+            link_inode = inode.link_count
+            link_entries = inode_d[inode.inode_number]
+            if link_entries != link_inode:
+                error_flag = True
+                print("INODE %d HAS %d LINKS BUT LINKCOUNT IS %d" % (inode.inode_number,link_entries,link_inode))
 
 def main():
     if len(sys.args)!=2:
@@ -126,6 +180,10 @@ def main():
                         
 
     block_consistency_audit()
+    inode_allocation_audits()
+    directory_consistency_audits()
+
+
     
 if __name__ == "__main__":
     main()
