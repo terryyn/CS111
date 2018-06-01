@@ -1,0 +1,69 @@
+import csv
+import sys
+
+filename = ""
+data = []
+
+class superblock:
+    def __init__(self,a,b,c,d,e,f,g):
+        self.total_num_blocks=a
+        self.total_num_inode=b
+        self.block_size=c
+        self.inode_size=d
+        self.block_per_group=e
+        self.inode_per_group=f
+        self.first_nonreserved_inode=g
+
+class group:
+    def __init__(self,a,b,c,d,e,f,g,h):
+        self.group_number=a
+        self.block_number_in_group=b
+        self.inode_number_in_group=c
+        self.freeblock_number=d
+        self.freeinode_number=e
+        self.freeblock_bitmap_num=f
+        self.freeinode_bitmap_num=g
+        self.first_block_inode=h
+
+class inode:
+    def __init__(self,a,b,c,d,e,f,g,h,i,j,k)
+
+sp = superblock(0,0,0,0,0,0,0)
+group_list = []
+bfree_list = []
+ifree_list = []
+inode_list = []
+
+
+def block_consistency_audit():
+      
+
+def main():
+    if len(sys.args)!=2:
+        print >> sys.stderr,"invalid number of arguments"
+        sys.exit(1)
+    filename = sys.args[1]
+    try:
+        with open(filename,'r') as ins:
+            for line in ins:
+                data.append(line.split(","))
+    except:
+        print>>sys.stderr,"cannot open csv file"
+        sys.exit(1)
+    for line in data:
+        if line[0] == 'SUPERBLOCK':
+            global sp=superblock(int(line[1]),int(line[2]),int(line[3]),int(line[4]),int(line[5]),int(line[6]),int(line[7]))
+        elif line[0]=='GROUP':
+            temp = group(int(line[1]),int(line[2]),int(line[3]),int(line[4]),int(line[5]),int(line[6]),int(line[7]),int(line[8]))
+            group_list.append(temp)
+        elif line[0] =='BFREE':
+            bfree_list.append(int(line[1]))
+        elif line[0] == 'IFREE':
+            ifree_list.append(int(line[1]))
+        elif line[0] == 'INODE':
+
+
+    block_consistency_audit()
+    
+if __name__ == "__main__":
+    main()
