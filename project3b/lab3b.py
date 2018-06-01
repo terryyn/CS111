@@ -117,7 +117,7 @@ def block_consistency_audit():
                     block_map[addresses[i]].append(temp_block)
                 else:
                     block_map[addresses[i]].append(temp_block)
-                if addresses[i]<0 or addresses[i]>max_size:
+                if addresses[i]<0 or (addresses[i]>max_size and inode.file_type!='s'):
                     error_flag = True
                     print('INVALID {} {} IN INODE {} AT OFFSET {}'.format(block_type,addresses[i],inode.inode_number,offset))
                 if addresses[i]<first_block:
