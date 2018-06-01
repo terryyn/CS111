@@ -161,7 +161,7 @@ def block_consistency_audit():
     for key in block_map:
         if len(block_map[key])>1:
             for temp in block_map[key]:
-                print('DUPLICATE {} {} IN INODE AT {} AT OFFSET {}'.format(temp.block_type,temp.block_num,temp.inode_num,temp.offset))
+                print('DUPLICATE {} {} IN INODE {} AT OFFSET {}'.format(temp.block_type,temp.block_num,temp.inode_num,temp.offset))
 
 
     for k in range(first_block,group_list[0].block_number_in_group):
