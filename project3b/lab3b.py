@@ -138,7 +138,7 @@ def block_consistency_audit():
         temp_block = block(block_type,indirect.blocknum_referenced,indirect.owning_file,offset)
 
         if indirect.blocknum_referenced not in bfree_list:
-            if  not in block_map:
+            if indirect.blocknum_referenced not in block_map:
                 block_map[indirect.blocknum_reference] = []
                 block_map[indirect.blocknum_reference].append(temp_block)
             else:
