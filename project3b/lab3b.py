@@ -8,6 +8,7 @@ unallocated_inodes = []
 allocated_inodes = []
 inode_parent = {2:2}
 
+
 class superblock:
     def __init__(self,a,b,c,d,e,f,g): 
         self.total_num_blocks=a
@@ -207,9 +208,9 @@ def directory_consistency_audits():
         elif inode_num < 1 or inode_num > sp.total_num_inode:
             print("DIRECTORY INODE %d NAME %s INVALID INODE %d" % (parent_num, dir_name, inode_num))
             error_flag = True
-        elif inode_num not in inode_d
+        elif inode_num not in inode_d:
             inode_d[inode_num] = 1
-        else
+        else:
             inode_d[inode_num] = 1 + inode_d[inode_num]
 
         if dir_name == "'.'":
@@ -234,20 +235,22 @@ def directory_consistency_audits():
                 print("INODE %d HAS %d LINKS BUT LINKCOUNT IS %d" % (inode.inode_number,link_entries,link_inode))
 
 def main():
-    if len(sys.args)!=2:
-        print >> sys.stderr,"invalid number of arguments"
+    global sp
+    if len(sys.argv)!=2:
+        sys.stderr.write("invalid number of arguments\n")
+        #print >> sys.stderr, "invalid number of arguments"
         sys.exit(1)
-    filename = sys.args[1]
+    filename = sys.argv[1]
     try:
         with open(filename,'r') as ins:
             for line in ins:
                 data.append(line.split(","))
     except:
-        print>>sys.stderr,"cannot open csv file"
+        sys.stderr.write("cannot open csv file\n")
         sys.exit(1)
     for line in data:
         if line[0] == 'SUPERBLOCK':
-            global sp=superblock(int(line[1]),int(line[2]),int(line[3]),int(line[4]),int(line[5]),int(line[6]),int(line[7]))
+            sp = superblock(int(line[1]),int(line[2]),int(line[3]),int(line[4]),int(line[5]),int(line[6]),int(line[7]))
         elif line[0]=='GROUP':
             temp_group = group(int(line[1]),int(line[2]),int(line[3]),int(line[4]),int(line[5]),int(line[6]),int(line[7]),int(line[8]))
             group_list.append(temp_group)
@@ -265,7 +268,7 @@ def main():
             temp_indirect = indirect(int(line[1]),int(line[2]),int(line[3]),int(line[4]),int(line[5]))
             indirect_list.append(temp_indirect)
         else:
-            print >> sys.stderr, "invalid data line"
+            sys.stderr.write("invalid data line\n")
             sys.exit(1)
                         
 
