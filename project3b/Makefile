@@ -6,7 +6,7 @@ default:
 	chmod +x lab3b
 
 clean:
-	rm -f *.tar.gz lab3b
+	rm -f *.tar.gz
 
 dist: lab3b-004757414.tar.gz
 files = lab3b.py Makefile lab3b README
