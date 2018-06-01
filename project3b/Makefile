@@ -3,7 +3,8 @@
 #ID: 704755732,004757414
 
 default:
-	chmod +x lab3b
+	chmod +x run.sh
+	./run.sh
 
 clean:
 	rm -f *.tar.gz
