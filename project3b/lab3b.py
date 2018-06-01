@@ -88,7 +88,7 @@ def block_consistency_audit():
     global error_flag
     global sp
     max_size = sp.block_per_group
-    first_block = group_list[0].first_block_inode+sp.inode_size*group_list[0].inode_number_in_group/sp.block_size
+    first_block = group_list[0].first_block_inode+int(sp.inode_size*group_list[0].inode_number_in_group/sp.block_size)
     for inode in inode_list:
         addresses = inode.block_address
         for i in range(len(addresses)):
