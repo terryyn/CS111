@@ -10,7 +10,7 @@ clean:
 	rm -f *.tar.gz
 
 dist: lab3b-004757414.tar.gz
-files = lab3b.py Makefile lab3b README
+files = lab3b.py Makefile run.sh README
 
 lab3b-004757414.tar.gz:
 	tar -zcf $@ $(files)
