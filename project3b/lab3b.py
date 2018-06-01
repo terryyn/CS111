@@ -194,23 +194,26 @@ def find_parent():
     for directory in directory_list:
         inode_num = directory.reference_inode
         if directory.name != "'.'" and directory.name != "'..'":
-            if inode_num >= 1 and inode_num <= sp.total_num_inode and inode_num in allocated_inodes:
+            if inode_num >= 1 and inode_num <= sp.total_num_inode and (inode_num not in unallocated_inodes):
                 inode_parent[inode_num] = directory.parent_inode_number
+    inode_parent[2] = 2
 
 
 def directory_consistency_audits():
-    global directory_list, unallocated_inodes, allocated_inodes, inode_parent
+    global directory_list, unallocated_inodes, allocated_inodes, inode_parent, error_flag
     inode_d = {}
     find_parent()
     for directory in directory_list:
         inode_num = directory.reference_inode
-        dir_name = directory.name
+        dir_name = directory.name[:-1]
         parent_num = directory.parent_inode_number
         if inode_num in unallocated_inodes:
-            print("DIRECTORY INODE %d NAME %s UNALLOCATED INODE %d" % (parent_num, dir_name, inode_num))
+            #name : -1?
+            #print("HERE %s problem" % dir_name)
+            print('DIRECTORY INODE {} NAME {} UNALLOCATED INODE {}'.format(parent_num, dir_name,inode_num))
             error_flag = True
         elif inode_num < 1 or inode_num > sp.total_num_inode:
-            print("DIRECTORY INODE %d NAME %s INVALID INODE %d" % (parent_num, dir_name, inode_num))
+            print('DIRECTORY INODE {} NAME {} INVALID INODE {}'.format(parent_num, dir_name,inode_num))
             error_flag = True
         elif inode_num not in inode_d:
             inode_d[inode_num] = 1
@@ -220,23 +223,23 @@ def directory_consistency_audits():
         if dir_name == "'.'":
             if inode_num != parent_num:
                 error_flag = True
-                print("DIRECTORY INODE %d NAME '.' LINK TO INODE %d SHOULD BE %d" % (parent_num, inode_num,parent_num))
+                print("DIRECTORY INODE {} NAME '.' LINK TO INODE {} SHOULD BE {}".format(parent_num,inode_num,parent_num))
         if dir_name == "'..'":
-            if inode_parent[parent_num] != inode_num:
+            if inode_parent[parent_num] != parent_num:
                 error_flag = True
-                print("DIRECTORY INODE %d NAME '..' LINK TO INODE %d SHOULD BE %d" % (parent_num, inode_num,inode_parent[parent_num]))
+                print("DIRECTORY INODE {} NAME '..' LINK TO INODE {} SHOULD BE {}".format(parent_num,inode_num,inode_parent[parent_num]))
                 
     for inode in allocated_inodes:
         if inode not in inode_d:
             if inode.link_count != 0:
                 error_flag = True
-                print("INODE %d HAS 0 LINKS BUT LINKCOUNT IS %d" % (inode.inode_number,inode.link_count))
+                print('INODE {} HAS 0 LINKS BUT LINKCOUNT IS {}'.format(inode.inode_number,inode.link_count))
         else:
             link_inode = inode.link_count
             link_entries = inode_d[inode.inode_number]
             if link_entries != link_inode:
                 error_flag = True
-                print("INODE %d HAS %d LINKS BUT LINKCOUNT IS %d" % (inode.inode_number,link_entries,link_inode))
+                print('INODE {} HAS {} LINKS BUT LINKCOUNT IS {}'.format(inode.inode_number,link_entries,link_inode))
 
 def main():
     global sp
