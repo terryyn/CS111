@@ -204,10 +204,10 @@ def directory_consistency_audits():
         if inode_num in unallocated_inodes:
             print("DIRECTORY INODE %d NAME %s UNALLOCATED INODE %d" % (parent_num, dir_name, inode_num))
             error_flag = True
-        else if inode_num < 1 or inode_num > sp.total_num_inode:
+        elif inode_num < 1 or inode_num > sp.total_num_inode:
             print("DIRECTORY INODE %d NAME %s INVALID INODE %d" % (parent_num, dir_name, inode_num))
             error_flag = True
-        else if inode_num not in inode_d
+        elif inode_num not in inode_d
             inode_d[inode_num] = 1
         else
             inode_d[inode_num] = 1 + inode_d[inode_num]
