@@ -176,19 +176,30 @@ def inode_allocation_audits():
     for inode in inode_list:
         inode_num = inode.inode_number
         if inode.file_type != '0':
+            allocated_inodes.append(inode)
             if inode_num in ifree_list:
                 print("ALLOCATED INODE %d ON FREELIST" % inode_num)
                 error_flag = True
-                allocated_inodes.append(inode)
                 unallocated_inodes.remove(inode_num)
         else:
             if inode_num not in ifree_list:
                 print("UNALLOCATED INODE %d NOT ON FREELIST" % inode_num)
                 error_flag = True
                 unallocated_inodes.append(inode_num)
-    #
-    # edit free inode lists?
-    #
+                
+    start = sp.first_nonreserved_inode
+    end = sp.total_num_inode
+    for inode_pos in range(start,end):
+        reserved_list = []
+        for inode in inode_list:
+            if inode.inode_number == inode_pos:
+                reserved_list.append(inode)
+        if len(reserved_list) <= 0 and (inode_pos not in ifree_list):
+            print("UNALLOCATED INODE %d NOT ON FREELIST" % inode_pos)
+            error_flag = True
+            unallocated_inodes.append(inode_pos)
+
+
 def find_parent():
     global inode_parent, directory_list
     for directory in directory_list:
@@ -227,10 +238,11 @@ def directory_consistency_audits():
         if dir_name == "'..'":
             if inode_parent[parent_num] != parent_num:
                 error_flag = True
-                print("DIRECTORY INODE {} NAME '..' LINK TO INODE {} SHOULD BE {}".format(parent_num,inode_num,inode_parent[parent_num]))
+                print("DIRECTORY INODE {} NAME '..' LINK TO INODE {} SHOULD BE {}".format(inode_parent[parent_num],parent_num,inode_num))
+                # why this order??
                 
     for inode in allocated_inodes:
-        if inode not in inode_d:
+        if inode.inode_number not in inode_d:
             if inode.link_count != 0:
                 error_flag = True
                 print('INODE {} HAS 0 LINKS BUT LINKCOUNT IS {}'.format(inode.inode_number,inode.link_count))
