@@ -3,6 +3,7 @@ import sys
 
 filename = ""
 data = []
+error_flag = False
 
 class superblock:
     def __init__(self,a,b,c,d,e,f,g):
@@ -40,11 +41,32 @@ class inode:
         self.disk_space = k
         self.block_address = l
 
+
+class directory:
+    def __init__(self,a,b,c,d,e,f):
+        self.parent_inode_number = a
+        self.logical_offset = b
+        self.reference_inode = c
+        self.entry_length = d
+        self.name_length = e
+        self.name = f
+
+
+class indirect:
+    def __init__(self,a,b,c,d,e):
+        self.owning_file = a
+        self.level = b
+        self.logical_offset = c
+        self.blocknum_scanned = d
+        self.blocknum_referenced = e
+
 sp = superblock(0,0,0,0,0,0,0)
 group_list = []
 bfree_list = []
 ifree_list = []
 inode_list = []
+directory_list = []
+indirect_list = []
 
 
 def block_consistency_audit():
@@ -83,7 +105,16 @@ def main():
         elif line[0] == 'INODE':
             temp_inode = inode(int(line[1]),line[2],int(line[3]),int(line[4]),int(line[5]),int(line[6]),line[7],line[8],line[9],int(line[10]),int(line[11]),line[12:])
             inode_list.append(temp_inode)
-        elif line[0] == ''
+        elif line[0] == 'DIRENT':
+            temp_direc = directory(int(line[1]),int(line[2]),int(line[3]),int(line[4]),int(line[5]),line[6])
+            directory_list.append(temp_direc)
+        elif line[0] == 'INDIRECT':
+            temp_indirect = indirect(int(line[1]),int(line[2]),int(line[3]),int(line[4]),int(line[5]))
+            indirect_list.append(temp_indirect)
+        else:
+            print >> sys.stderr, "invalid data line"
+            sys.exit(1)
+                        
 
     block_consistency_audit()
     
