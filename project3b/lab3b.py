@@ -112,17 +112,21 @@ def block_consistency_audit():
             temp_block = block(block_type,addresses[i],inode.inode_number,offset)
 
             if addresses[i] not in bfree_list:
-                if addresses[i] not in block_map:
-                    block_map[addresses[i]] = []
-                    block_map[addresses[i]].append(temp_block)
-                else:
-                    block_map[addresses[i]].append(temp_block)
+                temp_flag = True
                 if addresses[i]<0 or (addresses[i]>max_size and inode.file_type!='s'):
                     error_flag = True
+                    temp_flag = False
                     print('INVALID {} {} IN INODE {} AT OFFSET {}'.format(block_type,addresses[i],inode.inode_number,offset))
                 if addresses[i]<first_block:
                     error_flag = True
+                    temp_flag = False
                     print('RESERVED {} {} IN INODE {} AT OFFSET {}'.format(block_type,addresses[i],inode.inode_number,offset))
+                if(temp_flag):
+                    if addresses[i] not in block_map:
+                        block_map[addresses[i]] = []
+                        block_map[addresses[i]].append(temp_block)
+                    else:
+                        block_map[addresses[i]].append(temp_block)
             else:
                 error_flag = True
                 print('ALLOCATED BLOCK {} ON FREELIST'.format(addresses[i]))
