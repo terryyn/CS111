@@ -190,7 +190,7 @@ def inode_allocation_audits():
                 print("UNALLOCATED INODE %d NOT ON FREELIST" % inode_num)
                 error_flag = True
                 unallocated_inodes.append(inode_num)
-                
+
     start = sp.first_nonreserved_inode
     end = sp.total_num_inode
     for inode_pos in range(start,end):
@@ -238,11 +238,13 @@ def directory_consistency_audits():
         if dir_name == "'.'":
             if inode_num != parent_num:
                 error_flag = True
-                print("DIRECTORY INODE {} NAME '.' LINK TO INODE {} SHOULD BE {}".format(parent_num,inode_num,parent_num))
+                print("DIRECTORY INODE %d NAME '.' LINK TO INODE %d SHOULD BE %d" % (parent_num,inode_num,parent_num))
         if dir_name == "'..'":
             if inode_parent[parent_num] != parent_num:
                 error_flag = True
-                print("DIRECTORY INODE {} NAME '..' LINK TO INODE {} SHOULD BE {}".format(inode_parent[parent_num],parent_num,inode_num))
+                #print("DIRECTORY INODE %d NAME '..' LINK TO INODE %d SHOULD BE %d" % (parent_num,inode_num,inode_parent[parent_num]))
+                print("DIRECTORY INODE %d NAME '..' LINK TO INODE %d SHOULD BE %d" % (inode_num,parent_num,inode_parent[parent_num]))
+                #print("DIRECTORY INODE %d NAME '..' LINK TO INODE %d SHOULD BE %d" % (inode_parent[parent_num],parent_num,inode_num))
                 # why this order??
                 
     for inode in allocated_inodes:
