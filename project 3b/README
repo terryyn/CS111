@@ -1,0 +1,7 @@
+NAME:Yunong Ye,Xiwei Ma
+EMAIL:yeyunong@hotmail.com,xiweimacn@163.com
+ID:004757414,704755732
+
+lab3b.py:the source code to analyze the data csv
+README:the info about files
+Makefile:compile, clean and create tar file
