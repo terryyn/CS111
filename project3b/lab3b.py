@@ -91,6 +91,8 @@ def block_consistency_audit():
     first_block = group_list[0].first_block_inode+int(sp.inode_size*group_list[0].inode_number_in_group/sp.block_size)
     for inode in inode_list:
         addresses = inode.block_address
+        if inode.disk_space==0:
+            continue
         for i in range(len(addresses)):
             if addresses[i]==0:
                 continue
@@ -113,7 +115,7 @@ def block_consistency_audit():
 
             if addresses[i] not in bfree_list:
                 temp_flag = True
-                if addresses[i]<0 or (addresses[i]>max_size and inode.file_type!='s'):
+                if addresses[i]<0 or addresses[i]>max_size:
                     error_flag = True
                     temp_flag = False
                     print('INVALID {} {} IN INODE {} AT OFFSET {}'.format(block_type,addresses[i],inode.inode_number,offset))
