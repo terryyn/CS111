@@ -1,0 +1,8 @@
+NAME:Yunong Ye
+EMAIL:yeyunong@hotmail.com
+ID:004757414
+
+lab4c_tcp.c:code to read input and output to/from server
+lab4c_tls.c:code to use tls to read/write to/from server
+README:introduce the files included
+Makefile:tar,clean and compile
