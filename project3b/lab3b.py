@@ -231,7 +231,7 @@ def directory_consistency_audits():
             print('DIRECTORY INODE {} NAME {} INVALID INODE {}'.format(parent_num, dir_name,inode_num))
             error_flag = True
         else:
-            if (inode_num not in inode_parent) and (dir_name != "'.'") and (dir_name != "'..'"):
+            if (inode_num not in inode_parent):
                 inode_parent[inode_num] = directory.parent_inode_number
             if inode_num not in inode_d:
                 inode_d[inode_num] = 1
