@@ -91,7 +91,7 @@ def block_consistency_audit():
     first_block = group_list[0].first_block_inode+int(sp.inode_size*group_list[0].inode_number_in_group/sp.block_size)
     for inode in inode_list:
         addresses = inode.block_address
-        if inode.disk_space==0:
+        if inode.disk_space==0 and inode.file_type=='s':
             continue
         for i in range(len(addresses)):
             if addresses[i]==0:
