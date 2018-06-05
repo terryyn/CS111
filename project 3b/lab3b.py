@@ -91,6 +91,8 @@ def block_consistency_audit():
     first_block = group_list[0].first_block_inode+int(sp.inode_size*group_list[0].inode_number_in_group/sp.block_size)
     for inode in inode_list:
         addresses = inode.block_address
+        if inode.disk_space ==0 and inode.file_type=='s':
+            continue
         for i in range(len(addresses)):
             if addresses[i]==0:
                 continue
@@ -113,7 +115,7 @@ def block_consistency_audit():
 
             if addresses[i] not in bfree_list:
                 temp_flag = True
-                if addresses[i]<0 or (addresses[i]>max_size and inode.file_type!='s'):
+                if addresses[i]<0 or addresses[i]>max_size:
                     error_flag = True
                     temp_flag = False
                     print('INVALID {} {} IN INODE {} AT OFFSET {}'.format(block_type,addresses[i],inode.inode_number,offset))
@@ -204,20 +206,20 @@ def inode_allocation_audits():
             unallocated_inodes.append(inode_pos)
 
 
-def find_parent():
-    global inode_parent, directory_list
-    for directory in directory_list:
-        inode_num = directory.reference_inode
-        if directory.name != "'.'" and directory.name != "'..'":
-            if inode_num >= 1 and inode_num <= sp.total_num_inode and (inode_num not in unallocated_inodes):
-                inode_parent[inode_num] = directory.parent_inode_number
-    inode_parent[2] = 2
+#def find_parent():
+#    global inode_parent, directory_list
+#    for directory in directory_list:
+#        inode_num = directory.reference_inode
+#        if directory.name != "'.'" and directory.name != "'..'":
+#            if inode_num >= 1 and inode_num <= sp.total_num_inode and (inode_num not in unallocated_inodes):
+#                inode_parent[inode_num] = directory.parent_inode_number
+#    inode_parent[2] = 2
 
 
 def directory_consistency_audits():
     global directory_list, unallocated_inodes, allocated_inodes, inode_parent, error_flag
     inode_d = {}
-    find_parent()
+    #find_parent()
     for directory in directory_list:
         inode_num = directory.reference_inode
         dir_name = directory.name[:-1]
@@ -230,20 +232,23 @@ def directory_consistency_audits():
         elif inode_num < 1 or inode_num > sp.total_num_inode:
             print('DIRECTORY INODE {} NAME {} INVALID INODE {}'.format(parent_num, dir_name,inode_num))
             error_flag = True
-        elif inode_num not in inode_d:
-            inode_d[inode_num] = 1
         else:
-            inode_d[inode_num] = 1 + inode_d[inode_num]
+            if (inode_num not in inode_parent):
+                inode_parent[inode_num] = directory.parent_inode_number
+            if inode_num not in inode_d:
+                inode_d[inode_num] = 1
+            else:
+                inode_d[inode_num] = 1 + inode_d[inode_num]
 
         if dir_name == "'.'":
             if inode_num != parent_num:
                 error_flag = True
                 print("DIRECTORY INODE %d NAME '.' LINK TO INODE %d SHOULD BE %d" % (parent_num,inode_num,parent_num))
         if dir_name == "'..'":
-            if inode_parent[parent_num] != parent_num:
+            if inode_parent[parent_num] != inode_num:
                 error_flag = True
-                #print("DIRECTORY INODE %d NAME '..' LINK TO INODE %d SHOULD BE %d" % (parent_num,inode_num,inode_parent[parent_num]))
-                print("DIRECTORY INODE %d NAME '..' LINK TO INODE %d SHOULD BE %d" % (inode_num,parent_num,inode_parent[parent_num]))
+                print("DIRECTORY INODE %d NAME '..' LINK TO INODE %d SHOULD BE %d" % (parent_num,inode_num,inode_parent[parent_num]))
+                #print("DIRECTORY INODE %d NAME '..' LINK TO INODE %d SHOULD BE %d" % (inode_num,parent_num,inode_parent[parent_num]))
                 #print("DIRECTORY INODE %d NAME '..' LINK TO INODE %d SHOULD BE %d" % (inode_parent[parent_num],parent_num,inode_num))
                 # why this order??
                 
