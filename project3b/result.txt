@@ -1,0 +1,176 @@
+... using test directory /u/eng/class/classxiw/cs111/lab3b/CS111_test.classxiw
+... extracting /u/eng/class/classxiw/cs111/lab3b/lab3b-004757414.tar.gz
+lab3b.py
+./._Makefile
+Makefile
+README
+... checking for README file
+... checking for submitter ID in README
+... checking for submitter email in README
+... checking for submitter name in README
+... checking slip-day use in README
+    no SLIPDAYS: entry
+... checking for other expected files
+... checking for required Make targets
+... building default target(s)
+echo 'python3 lab3b.py $1' > lab3b
+chmod +x lab3b
+... deleting programs and data to force rebuild
+... checking make dist
+tar -zcf lab3b-004757414.tar.gz lab3b.py Makefile README
+ ... checking make clean
+rm -f *.tar.gz lab3b
+    restored to freshly untar-ed state ... OK
+... redo default make
+echo 'python3 lab3b.py $1' > lab3b
+chmod +x lab3b
+... checking for expected products
+... lab3b detects/reports bogus arguments
+    cannot open csv file
+... lab3b detects/reports non-existent input image
+    RC!=0 ... OK
+    cannot open csv file
+
+... executing test case P3B-test_1
+        incorrect output for 1.csv
+YOUR OUTPUT ...
+EXPECTED OUTPUT ...
+INVALID BLOCK 65 IN INODE 13 AT OFFSET 0
+==========
+... executing test case P3B-test_2
+        incorrect output for 2.csv
+YOUR OUTPUT ...
+EXPECTED OUTPUT ...
+INVALID INDIRECT BLOCK 65 IN INODE 13 AT OFFSET 12
+==========
+... executing test case P3B-test_3
+        incorrect output for 3.csv
+YOUR OUTPUT ...
+EXPECTED OUTPUT ...
+INVALID DOUBLE INDIRECT BLOCK 65 IN INODE 13 AT OFFSET 268
+==========
+... executing test case P3B-test_4
+        incorrect output for 4.csv
+YOUR OUTPUT ...
+EXPECTED OUTPUT ...
+INVALID TRIPLE INDIRECT BLOCK 65 IN INODE 13 AT OFFSET 65804
+==========
+... executing test case P3B-test_5
+        all 1 lines agree
+... executing test case P3B-test_6
+        all 1 lines agree
+... executing test case P3B-test_7
+        all 1 lines agree
+... executing test case P3B-test_8
+        all 1 lines agree
+... executing test case P3B-test_9
+        all 1 lines agree
+... executing test case P3B-test_10
+        all 1 lines agree
+... executing test case P3B-test_11
+GOLDEN.out TEST.out differ: char 28, line 1
+        incorrect output for 11.csv
+YOUR OUTPUT ...
+DUPLICATE BLOCK 8 IN INODE AT 13 AT OFFSET 0
+DUPLICATE BLOCK 8 IN INODE AT 2 AT OFFSET 0
+EXPECTED OUTPUT ...
+DUPLICATE BLOCK 8 IN INODE 13 AT OFFSET 0
+DUPLICATE BLOCK 8 IN INODE 2 AT OFFSET 0
+==========
+... executing test case P3B-test_12
+GOLDEN.out TEST.out differ: char 28, line 1
+        incorrect output for 12.csv
+YOUR OUTPUT ...
+DUPLICATE BLOCK 8 IN INODE AT 2 AT OFFSET 0
+DUPLICATE INDIRECT BLOCK 8 IN INODE AT 13 AT OFFSET 12
+EXPECTED OUTPUT ...
+DUPLICATE BLOCK 8 IN INODE 2 AT OFFSET 0
+DUPLICATE INDIRECT BLOCK 8 IN INODE 13 AT OFFSET 12
+==========
+... executing test case P3B-test_13
+GOLDEN.out TEST.out differ: char 28, line 1
+        incorrect output for 13.csv
+YOUR OUTPUT ...
+DUPLICATE BLOCK 8 IN INODE AT 2 AT OFFSET 0
+DUPLICATE DOUBLE INDIRECT BLOCK 8 IN INODE AT 13 AT OFFSET 268
+EXPECTED OUTPUT ...
+DUPLICATE BLOCK 8 IN INODE 2 AT OFFSET 0
+DUPLICATE DOUBLE INDIRECT BLOCK 8 IN INODE 13 AT OFFSET 268
+==========
+... executing test case P3B-test_14
+GOLDEN.out TEST.out differ: char 28, line 1
+        incorrect output for 14.csv
+YOUR OUTPUT ...
+DUPLICATE BLOCK 8 IN INODE AT 2 AT OFFSET 0
+DUPLICATE TRIPLE INDIRECT BLOCK 8 IN INODE AT 13 AT OFFSET 65804
+EXPECTED OUTPUT ...
+DUPLICATE BLOCK 8 IN INODE 2 AT OFFSET 0
+DUPLICATE TRIPLE INDIRECT BLOCK 8 IN INODE 13 AT OFFSET 65804
+==========
+... executing test case P3B-test_15
+        incorrect output for 15.csv
+YOUR OUTPUT ...
+EXPECTED OUTPUT ...
+UNALLOCATED INODE 18 NOT ON FREELIST
+==========
+... executing test case P3B-test_16
+        incorrect output for 16.csv
+YOUR OUTPUT ...
+ALLOCATED INODE 2 ON FREELIST
+INODE 2 HAS 0 LINKS BUT LINKCOUNT IS 4
+EXPECTED OUTPUT ...
+ALLOCATED INODE 2 ON FREELIST
+==========
+... executing test case P3B-test_17
+        incorrect output for 17.csv
+YOUR OUTPUT ...
+EXPECTED OUTPUT ...
+INODE 18 HAS 0 LINKS BUT LINKCOUNT IS 1
+==========
+... executing test case P3B-test_18
+GOLDEN.out TEST.out differ: char 1, line 1
+        incorrect output for 18.csv
+YOUR OUTPUT ...
+ INVALID INODE 26
+DIRECTORY INODE 2 NAME 'bogusEntry'
+EXPECTED OUTPUT ...
+DIRECTORY INODE 2 NAME 'bogusEntry' INVALID INODE 26
+==========
+... executing test case P3B-test_19
+GOLDEN.out TEST.out differ: char 1, line 1
+        incorrect output for 19.csv
+YOUR OUTPUT ...
+ UNALLOCATED INODE 18
+DIRECTORY INODE 2 NAME 'nullEntry'
+EXPECTED OUTPUT ...
+DIRECTORY INODE 2 NAME 'nullEntry' UNALLOCATED INODE 18
+==========
+... executing test case P3B-test_20
+        incorrect output for 20.csv
+YOUR OUTPUT ...
+EXPECTED OUTPUT ...
+INODE 2 HAS 4 LINKS BUT LINKCOUNT IS 5
+==========
+... executing test case P3B-test_21
+        incorrect output for 21.csv
+YOUR OUTPUT ...
+EXPECTED OUTPUT ...
+INODE 2 HAS 4 LINKS BUT LINKCOUNT IS 3
+==========
+... executing test case P3B-test_22
+        incorrect output for 22.csv
+YOUR OUTPUT ...
+EXPECTED OUTPUT ...
+DIRECTORY INODE 2 NAME '..' LINK TO INODE 11 SHOULD BE 2
+==========
+
+THIS SUBMISSION WILL USE NO SLIP-DAYS
+
+THE ONLY STUDENTS WHO WILL RECEIVE CREDIT FOR THIS SUBMISSION ARE:
+    004757414    yeyunong@hotmail.com
+    704755732    xiweimacn@163.com
+
+... cleaning up temporary files
+... removing test directory /u/eng/class/classxiw/cs111/lab3b/CS111_test.classxiw
+
+SUBMISSION lab3b-004757414.tar.gz ... FAILS sanity check with 16 errors
